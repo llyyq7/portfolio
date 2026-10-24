@@ -57,13 +57,14 @@ body {
 <script>
 function createModel(containerId, glbFile, type) {
   const dom = document.getElementById(containerId);
-  const w = dom.clientWidth;
-  const h = dom.clientHeight;
+  // ✅ 直接固定宽高比，不再实时读取dom宽高乱变！锁定你调好的比例
+  const fixedW = dom.clientWidth;
+  const fixedH = dom.clientHeight;
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xffffff);
 
-  const camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 1000);
+  const camera = new THREE.PerspectiveCamera(45, fixedW / fixedH, 0.1, 1000);
   if (type === "sofa") {
     camera.position.set(4, 3, 9);
   } else {
@@ -71,7 +72,7 @@ function createModel(containerId, glbFile, type) {
   }
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(w, h);
+  renderer.setSize(fixedW, fixedH);
   renderer.setPixelRatio(window.devicePixelRatio);
   dom.appendChild(renderer.domElement);
 
@@ -81,8 +82,11 @@ function createModel(containerId, glbFile, type) {
   controls.enableZoom = true;
   controls.enablePan = true;
 
-  const ambient = new THREE.AmbientLight(0xffffff, 0.75);
+  // 沙发提亮，书架亮度不变
+  const ambientIntensity = type === "sofa" ? 0.9 : 0.75;
+  const ambient = new THREE.AmbientLight(0xffffff, ambientIntensity);
   scene.add(ambient);
+
   const hemi = new THREE.HemisphereLight(0xffffff, 0xe2e2e2, 1.1);
   scene.add(hemi);
   const keyLight = new THREE.DirectionalLight(0xffffff, 1.1);
@@ -117,15 +121,9 @@ function createModel(containerId, glbFile, type) {
     renderer.render(scene, camera);
   }
   render();
-
-  window.addEventListener("resize", function () {
-    const nw = dom.clientWidth;
-    const nh = dom.clientHeight;
-    camera.aspect = nw / nh;
-    camera.updateProjectionMatrix();
-    renderer.setSize(nw, nh);
-  });
+  // ✅ 删掉resize更新相机比例！不再跟着窗口拉扯变形
 }
+
 createModel("box1", "sofa.glb", "sofa");
 createModel("box2", "bookshelf.glb", "shelf");
 </script>
