@@ -22,7 +22,7 @@ body {
 }
 .view-box {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: 340px;
   background: #ffffff;
   border: 1px solid #bbb;
 }
@@ -35,7 +35,6 @@ body {
 </style>
 </head>
 <body>
-
 <div class="item">
   <div class="view-box" id="box1"></div>
   <div class="desc">
@@ -56,15 +55,15 @@ body {
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
-
 function createModel(containerId, glbFile, type) {
   const dom = document.getElementById(containerId);
+  const w = dom.clientWidth;
+  const h = dom.clientHeight;
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xffffff);
 
-  const camera = new THREE.PerspectiveCamera(45, 4 / 3, 0.1, 1000);
-
+  const camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 1000);
   if (type === "sofa") {
     camera.position.set(4, 3, 9);
   } else {
@@ -72,23 +71,9 @@ function createModel(containerId, glbFile, type) {
   }
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(w, h);
   renderer.setPixelRatio(window.devicePixelRatio);
   dom.appendChild(renderer.domElement);
-
-  function resize() {
-    const w = dom.clientWidth;
-    const h = dom.clientHeight;
-
-    renderer.setSize(w, h);
-
-    camera.aspect = 4 / 3;
-    camera.updateProjectionMatrix();
-
-    renderer.domElement.style.width = w + "px";
-    renderer.domElement.style.height = h + "px";
-  }
-
-  resize();
 
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
@@ -96,21 +81,16 @@ function createModel(containerId, glbFile, type) {
   controls.enableZoom = true;
   controls.enablePan = true;
 
-  const ambientIntensity = type === "sofa" ? 0.9 : 0.75;
-  const ambient = new THREE.AmbientLight(0xffffff, ambientIntensity);
+  const ambient = new THREE.AmbientLight(0xffffff, 0.75);
   scene.add(ambient);
-
   const hemi = new THREE.HemisphereLight(0xffffff, 0xe2e2e2, 1.1);
   scene.add(hemi);
-
   const keyLight = new THREE.DirectionalLight(0xffffff, 1.1);
   keyLight.position.set(5, 8, 6);
   scene.add(keyLight);
-
   const fillLight1 = new THREE.DirectionalLight(0xffffff, 0.85);
   fillLight1.position.set(-5, 4, -4);
   scene.add(fillLight1);
-
   const fillLight2 = new THREE.DirectionalLight(0xffffff, 0.65);
   fillLight2.position.set(0, -3, 4);
   scene.add(fillLight2);
@@ -123,10 +103,11 @@ function createModel(containerId, glbFile, type) {
       scene.add(model);
       controls.target.copy(model.position);
       controls.update();
+      console.log(glbFile + " 加载成功");
     },
     undefined,
     function (err) {
-      console.error(err);
+      console.error(glbFile + " 加载失败", err);
     }
   );
 
@@ -137,12 +118,16 @@ function createModel(containerId, glbFile, type) {
   }
   render();
 
-  window.addEventListener("resize", resize);
+  window.addEventListener("resize", function () {
+    const nw = dom.clientWidth;
+    const nh = dom.clientHeight;
+    camera.aspect = nw / nh;
+    camera.updateProjectionMatrix();
+    renderer.setSize(nw, nh);
+  });
 }
-
 createModel("box1", "sofa.glb", "sofa");
 createModel("box2", "bookshelf.glb", "shelf");
-
 </script>
 </body>
 </html>
