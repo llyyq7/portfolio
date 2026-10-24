@@ -22,7 +22,7 @@ body {
 }
 .view-box {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 9;
   background: #ffffff;
   border: 1px solid #bbb;
 }
@@ -63,8 +63,8 @@ function createModel(containerId, glbFile, type) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xffffff);
 
-  // 【还原你原版斜向视角，不再改成正视角！】
-  const camera = new THREE.PerspectiveCamera(45, 4 / 3, 0.1, 1000);
+  // 相机比例改为16/9，角度保持原样不变
+  const camera = new THREE.PerspectiveCamera(45, 16 / 9, 0.1, 1000);
   if (type === "sofa") {
     camera.position.set(4, 3, 9);
   } else {
@@ -79,7 +79,7 @@ function createModel(containerId, glbFile, type) {
     const w = dom.clientWidth;
     const h = dom.clientHeight;
     renderer.setSize(w, h);
-    camera.aspect = 4 / 3;
+    camera.aspect = 16 / 9;
     camera.updateProjectionMatrix();
   }
   resize();
@@ -116,7 +116,7 @@ function createModel(containerId, glbFile, type) {
     function (res) {
       const model = res.scene;
       scene.add(model);
-      // 【自动居中模型】
+      // 模型自动居中
       const box = new THREE.Box3().setFromObject(model);
       const center = box.getCenter(new THREE.Vector3());
       model.position.sub(center);
