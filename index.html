@@ -21,9 +21,8 @@ body {
   margin-bottom: 15px;
 }
 .view-box {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  max-height: 420px; /* 限制框最大高度！框不会无限拉高 */
+  width: fit-content;
+  max-width: 100%;
   margin: 0 auto;
   background: #ffffff;
   border: 1px solid #bbb;
@@ -61,11 +60,10 @@ body {
 
 function createModel(containerId, glbFile, type) {
   const dom = document.getElementById(containerId);
-
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xffffff);
 
-  const camera = new THREE.PerspectiveCamera(45, 16 / 9, 0.1, 1000);
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
   if (type === "sofa") {
     camera.position.set(4, 3, 9);
   } else {
@@ -76,23 +74,12 @@ function createModel(containerId, glbFile, type) {
   renderer.setPixelRatio(window.devicePixelRatio);
   dom.appendChild(renderer.domElement);
 
-  function resize() {
-    const w = dom.clientWidth;
-    const h = dom.clientHeight;
-    renderer.setSize(w, h);
-    camera.aspect = 16 / 9;
-    camera.updateProjectionMatrix();
-  }
-  resize();
-  window.addEventListener("resize", resize);
-
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.enableRotate = true;
   controls.enableZoom = true;
   controls.enablePan = true;
 
-  // 提亮灯光
   const ambientIntensity = type === "sofa" ? 1.0 : 0.88;
   const ambient = new THREE.AmbientLight(0xffffff, ambientIntensity);
   scene.add(ambient);
@@ -118,11 +105,26 @@ function createModel(containerId, glbFile, type) {
     function (res) {
       const model = res.scene;
       scene.add(model);
+      // 计算模型包围盒
       const box = new THREE.Box3().setFromObject(model);
       const center = box.getCenter(new THREE.Vector3());
       model.position.sub(center);
       controls.target.set(0, 0, 0);
       controls.update();
+
+      // 自动适配画布：给模型留一点点边距，框紧贴内容
+      const padding = 0..12;
+      const size = new THREE.Vector3();
+      box.getSize(size);
+      const ratio = size.x / size.y;
+      // 设置画布基准宽度
+      const baseW = 620;
+      const w = baseW;
+      const h = baseW / ratio;
+
+      renderer.setSize(w, h);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
     },
     undefined,
     function (err) {
