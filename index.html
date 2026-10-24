@@ -22,7 +22,7 @@ body {
 }
 .view-box {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: 340px;
   background: #ffffff;
   border: 1px solid #bbb;
 }
@@ -35,7 +35,6 @@ body {
 </style>
 </head>
 <body>
-
 <div class="item">
   <div class="view-box" id="box1"></div>
   <div class="desc">
@@ -56,26 +55,24 @@ body {
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
-
 function createModel(containerId, glbFile, type) {
   const dom = document.getElementById(containerId);
-  const fixedW = dom.clientWidth;
-  const fixedH = dom.clientHeight;
+  const w = dom.clientWidth;
+  const h = dom.clientHeight;
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xffffff);
 
-  const camera = new THREE.PerspectiveCamera(45, fixedW / fixedH, 0.1, 1000);
-
+  // 【原版原始相机，完全不变，不再改动】
+  const camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 1000);
   if (type === "sofa") {
-    // 只改这里：从原来的 z=9 拉近到 z=6.2，画面更满
-    camera.position.set(4, 3, 6.2);
+    camera.position.set(4, 3, 9);
   } else {
     camera.position.set(2.5, 2, 5.5);
   }
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(fixedW, fixedH);
+  renderer.setSize(w, h);
   renderer.setPixelRatio(window.devicePixelRatio);
   dom.appendChild(renderer.domElement);
 
@@ -85,21 +82,19 @@ function createModel(containerId, glbFile, type) {
   controls.enableZoom = true;
   controls.enablePan = true;
 
+  // 只在这里改亮度：沙发提亮，书架维持原样
   const ambientIntensity = type === "sofa" ? 0.9 : 0.75;
   const ambient = new THREE.AmbientLight(0xffffff, ambientIntensity);
   scene.add(ambient);
 
   const hemi = new THREE.HemisphereLight(0xffffff, 0xe2e2e2, 1.1);
   scene.add(hemi);
-
   const keyLight = new THREE.DirectionalLight(0xffffff, 1.1);
   keyLight.position.set(5, 8, 6);
   scene.add(keyLight);
-
   const fillLight1 = new THREE.DirectionalLight(0xffffff, 0.85);
   fillLight1.position.set(-5, 4, -4);
   scene.add(fillLight1);
-
   const fillLight2 = new THREE.DirectionalLight(0xffffff, 0.65);
   fillLight2.position.set(0, -3, 4);
   scene.add(fillLight2);
@@ -112,11 +107,10 @@ function createModel(containerId, glbFile, type) {
       scene.add(model);
       controls.target.copy(model.position);
       controls.update();
-      console.log(glbFile + " 加载成功");
     },
     undefined,
     function (err) {
-      console.error(glbFile + " 加载失败", err);
+      console.error(err);
     }
   );
 
@@ -126,11 +120,19 @@ function createModel(containerId, glbFile, type) {
     renderer.render(scene, camera);
   }
   render();
+
+  // 保留原版resize（和你最初版本一致）
+  window.addEventListener('resize', ()=>{
+    const nw = dom.clientWidth;
+    const nh = dom.clientHeight;
+    camera.aspect = nw / nh;
+    camera.updateProjectionMatrix();
+    renderer.setSize(nw, nh);
+  })
 }
 
 createModel("box1", "sofa.glb", "sofa");
 createModel("box2", "bookshelf.glb", "shelf");
-
 </script>
 </body>
 </html>
