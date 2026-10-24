@@ -22,8 +22,7 @@ body {
 }
 .view-box {
   width: 100%;
-  /* 重点：锁定16:9比例，不再固定height:340px */
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 4 / 3;
   background: #ffffff;
   border: 1px solid #bbb;
 }
@@ -36,12 +35,13 @@ body {
 </style>
 </head>
 <body>
+
 <div class="item">
   <div class="view-box" id="box1"></div>
   <div class="desc">
     <strong>沙发模型</strong><br>
     本作品参照抖音 @3dmax效果图教学 的教程完成建模。<br>
-    不足之处：模型布线存在缺陷，部分结构段数较少，材质质感表现不够细腻。
+    不足之处：模型布线存在缺陷，部分结构段数分配不合理，转角位置布线杂乱；模型整体细节较少，材质质感表现不够细腻。
   </div>
 </div>
 
@@ -56,6 +56,7 @@ body {
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
+
 function createModel(containerId, glbFile, type) {
   const dom = document.getElementById(containerId);
   const fixedW = dom.clientWidth;
@@ -65,8 +66,10 @@ function createModel(containerId, glbFile, type) {
   scene.background = new THREE.Color(0xffffff);
 
   const camera = new THREE.PerspectiveCamera(45, fixedW / fixedH, 0.1, 1000);
+
   if (type === "sofa") {
-    camera.position.set(4, 3, 9);
+    // 只改这里：从原来的 z=9 拉近到 z=6.2，画面更满
+    camera.position.set(4, 3, 6.2);
   } else {
     camera.position.set(2.5, 2, 5.5);
   }
@@ -82,19 +85,21 @@ function createModel(containerId, glbFile, type) {
   controls.enableZoom = true;
   controls.enablePan = true;
 
-  // 沙发提亮，书架亮度不变
   const ambientIntensity = type === "sofa" ? 0.9 : 0.75;
   const ambient = new THREE.AmbientLight(0xffffff, ambientIntensity);
   scene.add(ambient);
 
   const hemi = new THREE.HemisphereLight(0xffffff, 0xe2e2e2, 1.1);
   scene.add(hemi);
+
   const keyLight = new THREE.DirectionalLight(0xffffff, 1.1);
   keyLight.position.set(5, 8, 6);
   scene.add(keyLight);
+
   const fillLight1 = new THREE.DirectionalLight(0xffffff, 0.85);
   fillLight1.position.set(-5, 4, -4);
   scene.add(fillLight1);
+
   const fillLight2 = new THREE.DirectionalLight(0xffffff, 0.65);
   fillLight2.position.set(0, -3, 4);
   scene.add(fillLight2);
@@ -121,11 +126,11 @@ function createModel(containerId, glbFile, type) {
     renderer.render(scene, camera);
   }
   render();
-  // 删掉resize，不再动态更新相机
 }
 
 createModel("box1", "sofa.glb", "sofa");
 createModel("box2", "bookshelf.glb", "shelf");
+
 </script>
 </body>
 </html>
