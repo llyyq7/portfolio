@@ -63,8 +63,8 @@ function createModel(containerId, glbFile, type) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xffffff);
 
+  // ========== 相机坐标完全沿用你调好、成功的那一组，布局不变 ==========
   const camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 1000);
-
   if (type === "sofa") {
     camera.position.set(4, 3, 9);
   } else {
@@ -82,33 +82,26 @@ function createModel(containerId, glbFile, type) {
   controls.enableZoom = true;
   controls.enablePan = true;
 
+  // 基础灯光 保持和你当前生效版本一模一样！！
   const ambient = new THREE.AmbientLight(0xffffff, 0.75);
   scene.add(ambient);
-
   const hemi = new THREE.HemisphereLight(0xffffff, 0xe2e2e2, 1.1);
   scene.add(hemi);
-
   const keyLight = new THREE.DirectionalLight(0xffffff, 1.1);
   keyLight.position.set(5, 8, 6);
   scene.add(keyLight);
-
   const fillLight1 = new THREE.DirectionalLight(0xffffff, 0.85);
   fillLight1.position.set(-5, 4, -4);
   scene.add(fillLight1);
-
   const fillLight2 = new THREE.DirectionalLight(0xffffff, 0.65);
   fillLight2.position.set(0, -3, 4);
   scene.add(fillLight2);
 
-  // 只给沙发模型额外加强一档暗部补光
+  // 【只额外给沙发加微弱补光，仅此一条改动！书架完全不加】
   if (type === "sofa") {
-    const sofaBoostLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    sofaBoostLight.position.set(-3, 6, 8);
-    scene.add(sofaBoostLight);
-
-    const sofaFillLight = new THREE.DirectionalLight(0xffffff, 0.35);
-    sofaFillLight.position.set(0, 2, -6);
-    scene.add(sofaFillLight);
+    const addLight = new THREE.DirectionalLight(0xffffff, 0.4);
+    addLight.position.set(-2,  3,  4);
+    scene.add(addLight);
   }
 
   const loader = new THREE.GLTFLoader();
@@ -119,7 +112,6 @@ function createModel(containerId, glbFile, type) {
       scene.add(model);
       controls.target.copy(model.position);
       controls.update();
-      console.log(glbFile + " 加载成功");
     },
     undefined,
     function (err) {
