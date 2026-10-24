@@ -33,7 +33,8 @@ const dirLight = new THREE.DirectionalLight(0xffffff,0.8);
 dirLight.position.set(5,8,6);
 scene.add(dirLight);
 
-const loader = new GLTFLoader();
+// ✅ 修改这里！加上 THREE.
+const loader = new THREE.GLTFLoader();
 loader.load('sofa.glb', (res)=>{
   scene.add(res.scene);
 });
