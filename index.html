@@ -63,7 +63,6 @@ function createModel(containerId, glbFile, type) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xffffff);
 
-  // ========== 相机坐标完全沿用你调好、成功的那一组，布局不变 ==========
   const camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 1000);
   if (type === "sofa") {
     camera.position.set(4, 3, 9);
@@ -82,9 +81,11 @@ function createModel(containerId, glbFile, type) {
   controls.enableZoom = true;
   controls.enablePan = true;
 
-  // 基础灯光 保持和你当前生效版本一模一样！！
-  const ambient = new THREE.AmbientLight(0xffffff, 0.75);
+  // 只在这里区分亮度：沙发 0.9，书架保持原来 0.75
+  const ambientIntensity = type === "sofa" ? 0.9 : 0.75;
+  const ambient = new THREE.AmbientLight(0xffffff, ambientIntensity);
   scene.add(ambient);
+
   const hemi = new THREE.HemisphereLight(0xffffff, 0xe2e2e2, 1.1);
   scene.add(hemi);
   const keyLight = new THREE.DirectionalLight(0xffffff, 1.1);
@@ -97,13 +98,6 @@ function createModel(containerId, glbFile, type) {
   fillLight2.position.set(0, -3, 4);
   scene.add(fillLight2);
 
-  // 【只额外给沙发加微弱补光，仅此一条改动！书架完全不加】
-  if (type === "sofa") {
-    const addLight = new THREE.DirectionalLight(0xffffff, 0.4);
-    addLight.position.set(-2,  3,  4);
-    scene.add(addLight);
-  }
-
   const loader = new THREE.GLTFLoader();
   loader.load(
     glbFile,
@@ -112,6 +106,7 @@ function createModel(containerId, glbFile, type) {
       scene.add(model);
       controls.target.copy(model.position);
       controls.update();
+      console.log(glbFile + " 加载成功");
     },
     undefined,
     function (err) {
