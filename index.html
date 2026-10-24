@@ -81,7 +81,7 @@ function createModel(containerId, glbFile, type) {
   controls.enableZoom = true;
   controls.enablePan = true;
 
-  const ambientIntensity = type === "sofa" ? 1.0 : 0.88;
+  const ambientIntensity = type === "sofa" ? 1.3 : 0.88;
   const ambient = new THREE.AmbientLight(0xffffff, ambientIntensity);
   scene.add(ambient);
 
