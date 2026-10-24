@@ -22,7 +22,8 @@ body {
 }
 .view-box {
   width: 100%;
-  height: 340px;
+  /* 重点：锁定16:9比例，不再固定height:340px */
+  aspect-ratio: 16 / 9;
   background: #ffffff;
   border: 1px solid #bbb;
 }
@@ -40,7 +41,7 @@ body {
   <div class="desc">
     <strong>沙发模型</strong><br>
     本作品参照抖音 @3dmax效果图教学 的教程完成建模。<br>
-    不足之处：模型布线存在缺陷，部分结构段数分配不合理，转角位置布线杂乱；模型整体细节较少，材质质感表现不够细腻。
+    不足之处：模型布线存在缺陷，部分结构段数较少，材质质感表现不够细腻。
   </div>
 </div>
 
@@ -57,7 +58,6 @@ body {
 <script>
 function createModel(containerId, glbFile, type) {
   const dom = document.getElementById(containerId);
-  // ✅ 直接固定宽高比，不再实时读取dom宽高乱变！锁定你调好的比例
   const fixedW = dom.clientWidth;
   const fixedH = dom.clientHeight;
 
@@ -121,7 +121,7 @@ function createModel(containerId, glbFile, type) {
     renderer.render(scene, camera);
   }
   render();
-  // ✅ 删掉resize更新相机比例！不再跟着窗口拉扯变形
+  // 删掉resize，不再动态更新相机
 }
 
 createModel("box1", "sofa.glb", "sofa");
