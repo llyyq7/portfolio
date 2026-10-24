@@ -81,16 +81,8 @@ function createModel(containerId, glbFile, type) {
   controls.enableZoom = true;
   controls.enablePan = true;
 
-  // 区分灯光：沙发环境光更亮，书架保持原来亮度！
-  let ambientIntensity;
-  if(type === "sofa"){
-    ambientIntensity = 0.95;
-  }else{
-    ambientIntensity = 0.75;
-  }
-  const ambient = new THREE.AmbientLight(0xffffff, ambientIntensity);
+  const ambient = new THREE.AmbientLight(0xffffff, 0.75);
   scene.add(ambient);
-
   const hemi = new THREE.HemisphereLight(0xffffff, 0xe2e2e2, 1.1);
   scene.add(hemi);
   const keyLight = new THREE.DirectionalLight(0xffffff, 1.1);
@@ -111,6 +103,7 @@ function createModel(containerId, glbFile, type) {
       scene.add(model);
       controls.target.copy(model.position);
       controls.update();
+      console.log(glbFile + " 加载成功");
     },
     undefined,
     function (err) {
@@ -133,7 +126,6 @@ function createModel(containerId, glbFile, type) {
     renderer.setSize(nw, nh);
   });
 }
-
 createModel("box1", "sofa.glb", "sofa");
 createModel("box2", "bookshelf.glb", "shelf");
 </script>
