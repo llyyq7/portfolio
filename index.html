@@ -14,14 +14,14 @@ canvas{display:block;}
 {
   "imports": {
     "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    "three/addons": "https://unpkg.com/three@0.160.0/examples/jsm"
   }
 }
 </script>
 <script type="module">
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons//controls/OrbitControls.js';
-import { GLTFLoader } from 'three/addons//loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -42,11 +42,9 @@ dirLight.position.set(5,8,6);
 scene.add(dirLight);
 
 const loader = new GLTFLoader();
-// 加载沙发
 loader.load('sofa.glb', (model)=>{
   scene.add(model.scene);
 });
-// 加载书架
 loader.load('bookshelf.glb', (model)=>{
   scene.add(model.scene);
 });
@@ -65,4 +63,3 @@ window.addEventListener('resize',()=>{
 </script>
 </body>
 </html>
-
