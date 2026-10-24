@@ -23,6 +23,8 @@ body {
 .view-box {
   width: 100%;
   aspect-ratio: 16 / 9;
+  max-height: 420px; /* 限制框最大高度！框不会无限拉高 */
+  margin: 0 auto;
   background: #ffffff;
   border: 1px solid #bbb;
 }
@@ -63,7 +65,6 @@ function createModel(containerId, glbFile, type) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xffffff);
 
-  // 相机比例改为16/9，角度保持原样不变
   const camera = new THREE.PerspectiveCamera(45, 16 / 9, 0.1, 1000);
   if (type === "sofa") {
     camera.position.set(4, 3, 9);
@@ -91,22 +92,23 @@ function createModel(containerId, glbFile, type) {
   controls.enableZoom = true;
   controls.enablePan = true;
 
-  const ambientIntensity = type === "sofa" ? 0.9 : 0.75;
+  // 提亮灯光
+  const ambientIntensity = type === "sofa" ? 1.0 : 0.88;
   const ambient = new THREE.AmbientLight(0xffffff, ambientIntensity);
   scene.add(ambient);
 
-  const hemi = new THREE.HemisphereLight(0xffffff, 0xe2e2e2, 1.1);
+  const hemi = new THREE.HemisphereLight(0xffffff, 0xe2e2e2, 1.2);
   scene.add(hemi);
 
-  const keyLight = new THREE.DirectionalLight(0xffffff, 1.1);
+  const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
   keyLight.position.set(5, 8, 6);
   scene.add(keyLight);
 
-  const fillLight1 = new THREE.DirectionalLight(0xffffff, 0.85);
+  const fillLight1 = new THREE.DirectionalLight(0xffffff, 0.95);
   fillLight1.position.set(-5, 4, -4);
   scene.add(fillLight1);
 
-  const fillLight2 = new THREE.DirectionalLight(0xffffff, 0.65);
+  const fillLight2 = new THREE.DirectionalLight(0xffffff, 0.75);
   fillLight2.position.set(0, -3, 4);
   scene.add(fillLight2);
 
@@ -116,11 +118,9 @@ function createModel(containerId, glbFile, type) {
     function (res) {
       const model = res.scene;
       scene.add(model);
-      // 模型自动居中
       const box = new THREE.Box3().setFromObject(model);
       const center = box.getCenter(new THREE.Vector3());
       model.position.sub(center);
-
       controls.target.set(0, 0, 0);
       controls.update();
     },
