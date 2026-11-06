@@ -91,22 +91,23 @@ function createModel(containerId, glbFile, type) {
     controls.enableZoom = true;
     controls.enablePan = true;
 
-    const ambientIntensity = type === "sofa" ? 1.8 : (type === "pcset" ? 0.95 : 0.88);
+    // 键鼠环境光拉高到1.4，沙发和书架维持原来亮度不变
+    const ambientIntensity = type === "sofa" ? 1.8 : (type === "pcset" ? 1.4 : 0.88);
     const ambient = new THREE.AmbientLight(0xffffff, ambientIntensity);
     scene.add(ambient);
 
-    const hemi = new THREE.HemisphereLight(0xffffff, 0x2e2e2e, 1.2);
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 1.4);
     scene.add(hemi);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.4);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.8);
     keyLight.position.set(5, 8, 6);
     scene.add(keyLight);
 
-    const fillLight1 = new THREE.DirectionalLight(0xffffff, 0.95);
+    const fillLight1 = new THREE.DirectionalLight(0xffffff, 1.2);
     fillLight1.position.set(-5, 4, -4);
     scene.add(fillLight1);
 
-    const fillLight2 = new THREE.DirectionalLight(0xffffff, 0.75);
+    const fillLight2 = new THREE.DirectionalLight(0xffffff, 1.0);
     fillLight2.position.set(0, -3, 4);
     scene.add(fillLight2);
 
@@ -156,3 +157,4 @@ createModel("box3", "THREE.glb", "pcset");
 </script>
 </body>
 </html>
+
