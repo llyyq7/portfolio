@@ -62,6 +62,14 @@ body {
     </div>
 </div>
 
+<!-- ========== 新增：小房子 ========== -->
+<div class="item">
+    <div class="view-box" id="box4"></div>
+    <div class="desc">
+        <strong>小房子模型</strong>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -154,7 +162,8 @@ function createModel(containerId, glbFile, type) {
 createModel("box1", "sofa.glb", "sofa");
 createModel("box2", "bookshelf.glb", "shelf");
 createModel("box3", "THREE.glb", "pcset");
+// ========== 新增调用小房子，type随便写，走默认灯光相机 ==========
+createModel("box4", "home.glb", "house");
 </script>
 </body>
 </html>
-
