@@ -62,7 +62,6 @@ body {
     </div>
 </div>
 
-<!-- ========== 新增：小房子 ========== -->
 <div class="item">
     <div class="view-box" id="box4"></div>
     <div class="desc">
@@ -85,6 +84,8 @@ function createModel(containerId, glbFile, type) {
         camera.position.set(4, 3, 9);
     } else if (type === "pcset") {
         camera.position.set(3, 2.2, 6);
+    } else if (type === "house") {
+        camera.position.set(-4, 2.8, 4.5);
     } else {
         camera.position.set(2.5, 2, 5.5);
     }
@@ -99,7 +100,6 @@ function createModel(containerId, glbFile, type) {
     controls.enableZoom = true;
     controls.enablePan = true;
 
-    // 键鼠环境光拉高到1.4，沙发和书架维持原来亮度不变
     const ambientIntensity = type === "sofa" ? 1.8 : (type === "pcset" ? 1.4 : 0.88);
     const ambient = new THREE.AmbientLight(0xffffff, ambientIntensity);
     scene.add(ambient);
@@ -131,12 +131,10 @@ function createModel(containerId, glbFile, type) {
             controls.target.set(0,0,0);
             controls.update();
 
-            // 拿到模型自身宽高比例
             const size = new THREE.Vector3();
             box.getSize(size);
             const modelRatio = size.x / size.y;
 
-            // 画布基准宽度，不超过容器最大宽度
             const baseW = dom.clientWidth;
             const canvasW = baseW;
             const canvasH = canvasW / modelRatio;
@@ -162,7 +160,6 @@ function createModel(containerId, glbFile, type) {
 createModel("box1", "sofa.glb", "sofa");
 createModel("box2", "bookshelf.glb", "shelf");
 createModel("box3", "THREE.glb", "pcset");
-// ========== 新增调用小房子，type随便写，走默认灯光相机 ==========
 createModel("box4", "home.glb", "house");
 </script>
 </body>
